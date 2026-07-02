@@ -2,10 +2,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: rdicidr-service
+  labels:
+    app: rdicidr
 spec:
-  type: ClusterIP
+  # LoadBalancer provisions an AWS ELB so the app is reachable publicly.
+  # Use ClusterIP instead if you front it with an Ingress/ALB.
+  type: LoadBalancer
+  # Must match the Deployment pod label app: rdicidr (was rdicidr-web, which
+  # matched no pods, so the Service had no endpoints).
   selector:
-    app: rdicidr-web
+    app: rdicidr
   ports:
     - protocol: TCP
       port: 80

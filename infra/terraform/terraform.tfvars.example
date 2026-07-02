@@ -1,0 +1,12 @@
+# Copy to terraform.tfvars and adjust as needed.
+region             = "us-east-1"
+project            = "rdicidr"
+cluster_name       = "rdicidr-eks"
+kubernetes_version = "1.34"
+
+node_instance_types = ["t3.medium"]
+node_desired_size   = 2
+node_min_size       = 2
+node_max_size       = 3
+
+ci_user_name = "rdicidr-ci"

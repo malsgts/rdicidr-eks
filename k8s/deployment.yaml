@@ -16,27 +16,36 @@ spec:
     spec:
       containers:
         - name: rdicidr
-          image: rdicidr:latest
-          imagePullPolicy: IfNotPresent  # FIXME: pods sometimes use stale image — should this be Always?
+          # IMAGE_PLACEHOLDER is substituted by the CD workflow with the pushed
+          # ECR image, e.g. <acct>.dkr.ecr.us-east-1.amazonaws.com/rdicidr:<sha>.
+          # For manual deploys, sed-replace it (see DEPLOY-RUNBOOK.md).
+          image: IMAGE_PLACEHOLDER
+          # Always: the deploy pushes a new image under the same tag stream, so
+          # nodes must re-pull instead of reusing a cached layer (fixes the
+          # "stale image" FIXME).
+          imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            # nginx (see Dockerfile / nginx.conf) listens on 80, not 3000.
+            - containerPort: 80
           resources:
+            # Right-sized for a static nginx site. The original 4 CPU / 4Gi
+            # request could not be scheduled on normal worker nodes.
             requests:
-              memory: "4Gi"
-              cpu: "4000m"
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: "8Gi"
-              cpu: "8000m"
+              memory: "256Mi"
+              cpu: "250m"
           livenessProbe:
             httpGet:
               path: /health
-              port: 3000
-            initialDelaySeconds: 1
-            periodSeconds: 3
-            failureThreshold: 1
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
-              port: 3000
+              port: 80
             initialDelaySeconds: 5
-            periodSeconds: 5
+            periodSeconds: 10

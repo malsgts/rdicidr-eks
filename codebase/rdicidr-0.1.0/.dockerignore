@@ -1,0 +1,9 @@
+node_modules
+build
+coverage
+.git
+.github
+npm-debug.log*
+# Keep .env — the production build needs REACT_APP_API_URL baked in.
+.env.local
+.env.*.local
