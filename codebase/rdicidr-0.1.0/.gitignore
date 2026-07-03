@@ -13,7 +13,8 @@
 
 # misc
 .DS_Store
-.env
+# NOTE: .env is committed on purpose. It holds the non-secret REACT_APP_API_URL
+# the app/tests require. Real secrets belong in the .local files below (ignored).
 .env.local
 .env.development.local
 .env.test.local
